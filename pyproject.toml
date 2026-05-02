@@ -1,0 +1,29 @@
+[project]
+name = "fastTkinter"
+version = "0.1.0"
+description = "A programmer-friendly abstraction over tkinter, that helps create complex UIs faster & better"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+license = "MIT"
+authors = [
+  { name="Arsalan Arish", email="mail@arsalanarish.com" },
+]
+keywords = ["fastTk", "fastTkinter", "pythonUI"]
+
+
+[project.urls]
+Repository = "https://github.com/arsalan-arish/fastTkinter"
+
+
+[build-system]
+requires = ["uv_build>=0.9.0"]
+build-backend = "uv_build"
+
+
+[tool.uv.build-backend]
+module-root = "src"
+module-name = "fastTkinter"
+
+# [tool.pyright]
+# ignore = ["src/"]
