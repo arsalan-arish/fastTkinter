@@ -25,5 +25,5 @@ build-backend = "uv_build"
 module-root = "src"
 module-name = "fastTkinter"
 
-# [tool.pyright]
-# ignore = ["src/"]
+[tool.pyright]
+ignore = ["src/"]
