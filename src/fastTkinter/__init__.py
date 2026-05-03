@@ -1,6 +1,6 @@
-from .core import *
+from .ftk import *
 
 __all__ = [
-    "fTk",
+    "ftk",
 
 ]
