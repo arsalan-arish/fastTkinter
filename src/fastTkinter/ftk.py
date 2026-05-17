@@ -4,15 +4,17 @@ from pathlib import Path
 
 
 
-class ftk:
+class fTk:
     def __init__(self):
-        self._root = Tk()
-        self._root.tk.call('lappend', 'auto_path', str(Path(__file__).parent) + '\\themes\\awthemes-10.4.0')
-        
+        self._widget = Tk()
+        self._widget.tk.call('lappend', 'auto_path', str(Path(__file__).parent) + '\\themes\\awthemes-10.4.0')
+        self.parent = None
+        self.children = []
+        self.osWindowId = self._widget.winfo_id()
 
     def _setTheme(self, theme):
         if not theme == "default":
-            self._root.tk.call('package', 'require', theme)
+            self._widget.tk.call('package', 'require', theme)
             ttk.Style().theme_use(theme)
 
 
@@ -24,10 +26,13 @@ class ftk:
         geometry: str => Window dimensions -> "900x600"
         theme: Literal['default', 'awdark', 'awarc', 'awblack', 'awlight']
         """
-        self._root.title = cnf.get("title", "")
-        self._root.geometry = cnf.get("geometry", "600x600")
+        self._widget.title = cnf.get("title", "")
+        self._widget.geometry = cnf.get("geometry", "600x600")
         self._setTheme(cnf.get("theme", "default"))
 
 
     def mainloop(self):
-        self._root.mainloop()
+        self._widget.mainloop()
+
+class fToplevel:
+    pass
