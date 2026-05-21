@@ -1,8 +1,8 @@
-from fastTkinter import ftk
+from fastTkinter import fTk
 
 
 class App:
-    def __init__(self, root: ftk):
+    def __init__(self, root: fTk):
         root.configure(
             title = "Hello",
             geometry = "800x600",
@@ -12,7 +12,7 @@ class App:
 
 
 def main():
-    root = ftk()
+    root = fTk()
     App(root)
     root.mainloop()
 main()
