@@ -2,20 +2,17 @@ from tkinter import *
 from tkinter import ttk
 from ..ftk import fTk, fToplevel
 
-""" Protocol:
-    - every fwidget must contain its actual Tk Widget object in '_widget' variable of self 
-    - every fwidget must contain its parent fWidget in 'parent' attribute
-    - every fwidget must contain its children in 'children' attribute
-"""
 
 class fWidget:
     idCounter = 0
-    def __init__(self, parent, widget):
-        self._widget = widget
-        self.children = []
-        self.parent = parent
-        parent._children.append(self)
+    def __init__(self, parent: fWidget | fTk | fToplevel, tkwidget: Widget):
+        self._widget = tkwidget
         self.id = __class__.idCounter; __class__.idCounter += 1
+        self.children = []
+        self.parent = parent; parent._children.append(self)
+        while not isinstance(parent, (fTk, fToplevel)):
+            parent = parent.parent
+        self.ftoplevel = parent
     
     def exists(self) -> bool:
         return self._widget.winfo_exists()
@@ -29,22 +26,33 @@ class fWidget:
     def currentGeometryManager(self):
         return self._widget.winfo_manager()
     
-    def geometry(self) -> str:
-        return self._widget.winfo_geometry()
-    
-    def dimensions(self) -> tuple[int, int]:
-        return self._widget.winfo_width(), self._widget.winfo_height()
+    def dimensionsVisible(self) -> tuple[int, int]:
+        self._widget.update_idletasks()
+        if self.isViewable():
+            return self._widget.winfo_width(), self._widget.winfo_height()
+        else:
+            return 0, 0 
 
     def dimensionsRequested(self) -> tuple[int, int]:
         return self._widget.winfo_reqwidth(), self._widget.winfo_reqheight()
     
-    def toplevel(self) -> Tk | Toplevel:
-        return self._widget.winfo_toplevel()
+    def xy(self, distanceFrom: Literal['screen', 'toplevel', 'parent']) -> tuple[int, int]:
+        """ Get the x,y coordinates of the top-left corner of a widget """
+        match distanceFrom:
+            case 'screen':
+                return self._widget.winfo_rootx(), self._widget.winfo_rooty()
+            
+            case 'window':
+                root = self.ftoplevel._widget
+
+                return (
+                    self._widget.winfo_rootx() - root.winfo_rootx(),
+                    self._widget.winfo_rooty() - root.winfo_rooty()
+                )
+
+            case 'parent':
+                return self._widget.winfo_x(), self._widget.winfo_y()
     
-    self._widget.winfo_rootx()
-    self._widget.winfo_rooty()
-    self._widget.winfo_x()
-    self._widget.winfo_y()
     
 
 class fMenu(fWidget):
@@ -81,31 +89,16 @@ class fMenu(fWidget):
 
         Functions inherited from fWidget...
         """
-        super().__init__(parent, Menu(parent._widget, tearoff=0, font=font, postcommand=onDisplayCommand, bd=bdwidth, relief=bdstyle, background=bg, foreground=textcolor, activebackground=activebg, activeforeground=activetextcolor, disabledforeground=disabledtextcolor))    
-        #! LOGICALLY FOR THE ROOT WINDOW NOT FWIDGET
-        #! winfo_containing(rootX, rootY, displayof=0)
-        #! winfo_depth()
-        #! winfo_fpixels(number)
-        #! winfo_pointerx()
-        #! winfo_pointery()
-        #! winfo_pointerxy()
-        #! winfo_screen()
-        #! winfo_screencells()
-        #! winfo_screendepth()
-        #! winfo_screenheight()
-        #! winfo_screenmmheight()
-        #! winfo_screenmmwidth()
-        #! winfo_screenwidth()
-        #! self._widget.winfo_pixels(number)
-        #! self._widget.winfo_rgb(color) rgb tuple from string like 'red'
-
+        super().__init__(parent, Menu(parent._widget, tearoff=0, font=font, postcommand=onDisplayCommand, bd=bdwidth, relief=bdstyle, background=bg, foreground=textcolor, activebackground=activebg, activeforeground=activetextcolor, disabledforeground=disabledtextcolor))
+        
+    #! Consider extending the arguments of the below 4 functions
     def add_submenu(self, *, 
                     index=None,
                     label: str = "", 
                     command: function = lambda:None, 
                     submenu: fMenu,
-                    ): 
-        self._widget.add_cascade(label=label, menu=submenu._widget, command=command) if index is None else self._widget.insert_cascade(index, label=label, menu=submenu._widget)
+                    ):
+        self._widget.add_cascade(label=label, menu=submenu._widget, command=command) if index is None else self._widget.insert_cascade(index, label=label, menu=submenu._widget, command=command)
     def add_command(self, *, 
                     index=None,
                     label: str = "", 
@@ -113,7 +106,7 @@ class fMenu(fWidget):
                     ):
         self._widget.add_command(label=label, command=command) if index is None else self._widget.insert_command(index, label=label, command=command)
 
-    def add_radiobutton(self, 
+    def add_radiobutton(self, *,
                         index=None,
                         label: str = "",
                         variable: Variable = StringVar(),
@@ -121,7 +114,7 @@ class fMenu(fWidget):
                         ):
         self._widget.add_radiobutton(label=label, variable=variable, value=value) if index is None else self._widget.insert_radiobutton(index, label=label, variable=variable, value=value)
 
-    def add_checkbutton(self, 
+    def add_checkbutton(self, *,
                         index=None,
                         label: str = "",
                         variable: Variable = BoolVar(),

@@ -2,7 +2,22 @@ from tkinter import *
 from tkinter import ttk
 from pathlib import Path
 
-
+#! Widget methods LOGICALLY FOR THE ROOT WINDOW NOT FWIDGET
+        #! winfo_containing(rootX, rootY, displayof=0)
+        #! winfo_depth()
+        #! winfo_fpixels(number)
+        #! winfo_pointerx()
+        #! winfo_pointery()
+        #! winfo_pointerxy()
+        #! winfo_screen()
+        #! winfo_screencells()
+        #! winfo_screendepth()
+        #! winfo_screenheight()
+        #! winfo_screenmmheight()
+        #! winfo_screenmmwidth()
+        #! winfo_screenwidth()
+        #! self._widget.winfo_pixels(number)
+        #! self._widget.winfo_rgb(color) rgb tuple from string like 'red'
 
 class fTk:
     def __init__(self):
